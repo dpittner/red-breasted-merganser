@@ -1,4 +1,15 @@
 const duckdb = require('duckdb');
+const express = require("express");
+const app = express()
+
+PORT = 8080
+app.use(express.json())
+const router = express.Router()
+app.use("/", router)
+
+const server = app.listen(PORT, () => {
+	console.log(`Server is up and running on port ${PORT}!!`)
+})
 
 const db = new duckdb.Database(':memory:', { allow_unsigned_extensions: 'true' });
 
@@ -14,7 +25,7 @@ const query = (query) => {
       })
     })
   }
-async function main(args) {
+router.post("/", async (req,res) => {
     try {
         if (!initialized) {
             await query(`SET home_directory='/tmp';`);
@@ -30,24 +41,18 @@ async function main(args) {
             initialized = true;
         }
 
-        const queryResult = await query(args.query);
+        const queryResult = await query(req.body.query);
 
-        return {
-            statusCode: 200,
-            headers: { "Content-Type": "application/json;charset=utf-8" },
-            body: JSON.stringify(queryResult)
-        };
+        res.status(200);
+        res.send(JSON.stringify(queryResult));
+      
     } catch (e) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify(e)
-        }
+        res.status(400);
+        res.send(JSON.stringify(e));
     }
-  }
+  });
   
 
   process.on('SIGTERM', () => {
 	console.info('SIGTERM signal received.');
   });
-
-  module.exports.main = main;
