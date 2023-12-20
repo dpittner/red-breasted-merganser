@@ -37,6 +37,7 @@ router.post("/", async (req,res) => {
 
             await query(`SET s3_endpoint='s3.direct.eu-de.cloud-object-storage.appdomain.cloud';`);
             await query(`SET s3_url_style='path';`);
+            await query(`SET threads TO 32;`);
             await query(`PRAGMA enable_profiling;`);
 
             initialized = true;
