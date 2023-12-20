@@ -46,6 +46,7 @@ router.post("/", async (req,res) => {
         const queryResult = await query(req.body.query);
 
         res.status(200);
+        console.log(queryResult);
         res.send(JSON.stringify(queryResult));
       
     } catch (e) {
